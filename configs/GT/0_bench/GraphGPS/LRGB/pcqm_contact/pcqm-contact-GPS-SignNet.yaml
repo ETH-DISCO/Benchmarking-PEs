@@ -1,0 +1,74 @@
+out_dir: results
+metric_best: mrr
+num_workers: 1
+mlflow:
+  use: False
+  project: Exp
+  name: pcqm4m-contact-GPS-SignNet
+wandb:
+  use: True
+  project: "PEGT"
+  name: "pcqm4m-contact-GPS-SignNet"
+  entity: jiaqing
+dataset:
+  format: OGB
+  name: PCQM4Mv2Contact-shuffle
+  task: graph  # PCQM4Mv2Contact is edge-level task, but because it is inductive, set to 'graph'
+  task_type: classification
+  resample_negative: True
+  transductive: False
+  node_encoder: True
+  node_encoder_name: Atom+SignNet
+  node_encoder_bn: False
+  edge_encoder: True
+  edge_encoder_name: Bond
+  edge_encoder_bn: False
+posenc_SignNet:
+  dim_pe: 16
+  eigen:
+    eigvec_norm: L2
+    laplacian_norm: sym
+    max_freqs: 16
+  enable: True
+  layers: 4
+  model: MLP
+  n_heads: 4
+  pass_as_var: false
+  phi_hidden_dim: 76
+  phi_out_dim: 4
+  post_layers: 2
+  raw_norm_type: none
+train:
+  mode: custom
+  batch_size: 500
+  eval_period: 1
+  ckpt_period: 100
+model:
+  type: GPSModel
+  loss_fun: cross_entropy
+  edge_decoding: dot
+gt:
+  layer_type: CustomGatedGCN+Transformer
+  layers: 6
+  n_heads: 4
+  dim_hidden: 76  # `gt.dim_hidden` must match `gnn.dim_inner`
+  dropout: 0.0
+  attn_dropout: 0.5
+  layer_norm: False
+  batch_norm: True
+gnn:
+  head: inductive_edge
+  layers_pre_mp: 0
+  layers_post_mp: 1
+  dim_inner: 76  # `gt.dim_hidden` must match `gnn.dim_inner`
+  batchnorm: True
+  act: relu
+  dropout: 0.0
+optim:
+  clip_grad_norm: True
+  optimizer: adamW
+  weight_decay: 0.0
+  base_lr:  0.001
+  max_epoch: 100
+  scheduler: cosine_with_warmup
+  num_warmup_epochs: 10

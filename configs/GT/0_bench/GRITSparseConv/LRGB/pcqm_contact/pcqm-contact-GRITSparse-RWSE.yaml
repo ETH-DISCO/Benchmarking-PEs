@@ -1,0 +1,79 @@
+out_dir: results
+metric_best: mrr
+num_workers: 1
+mlflow:
+  use: False
+  project: Exp
+  name: pcqm4m-contact-GRITSparse-RWSE
+wandb:
+  use: True
+  project: "PEGT"
+  name: "pcqm4m-contact-GRITSparse-RWSE"
+  entity: jiaqing
+dataset:
+  format: OGB
+  name: PCQM4Mv2Contact-shuffle
+  task: graph  # PCQM4Mv2Contact is edge-level task, but because it is inductive, set to 'graph'
+  task_type: classification
+  resample_negative: True
+  transductive: False
+  node_encoder: True
+  node_encoder_name: Atom+RWSE
+  node_encoder_bn: False
+  edge_encoder: True
+  edge_encoder_name: Bond
+  edge_encoder_bn: False
+posenc_RWSE:
+  enable: True
+  kernel:
+    times_func: range(1,21)
+  model: Linear
+  dim_pe: 16
+  raw_norm_type: BatchNorm
+train:
+  mode: custom
+  batch_size: 500
+  eval_period: 1
+  ckpt_period: 100
+model:
+  type: GritTransformer
+  loss_fun: cross_entropy
+  graph_pooling: mean
+gt:
+  layer_type: GritTransformer
+  layers: 10
+  n_heads: 8
+  dim_hidden: 64  # `gt.dim_hidden` must match `gnn.dim_inner`
+  dropout: 0.0
+  layer_norm: False
+  batch_norm: True
+#  bn_momentum: 0.01
+  sparse: True
+  update_e: True
+  attn_dropout: 0.2
+  attn:
+    clamp: 5.
+    act: 'relu'
+    full_attn: True
+    edge_enhance: True
+    O_e: True
+    norm_e: True
+    fwl: False
+gnn:
+  head: inductive_edge
+  layers_pre_mp: 0
+  layers_post_mp: 2
+  dim_inner: 64  # `gt.dim_hidden` must match `gnn.dim_inner`
+  batchnorm: True
+  act: gelu
+  dropout: 0.1
+  agg: mean
+  normalize_adj: False
+optim:
+  clip_grad_norm: True
+  optimizer: adamW
+  weight_decay: 0.0
+  base_lr: 0.001
+  max_epoch: 100
+  scheduler: cosine_with_warmup
+  num_warmup_epochs: 10

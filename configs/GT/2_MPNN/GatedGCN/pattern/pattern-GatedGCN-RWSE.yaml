@@ -1,0 +1,66 @@
+out_dir: results
+metric_best: accuracy-SBM
+wandb:
+  use: True
+  project: "PEGT"
+  name: "PATTERN-GatedGCN-RWSE"
+  entity: jiaqing
+dataset:
+  format: PyG-GNNBenchmarkDataset
+  name: PATTERN
+  task: graph
+  task_type: classification
+  transductive: False
+  split_mode: standard
+  node_encoder: True
+  node_encoder_name: LinearNode+RWSE
+  node_encoder_bn: False
+  edge_encoder: True
+  edge_encoder_name: DummyEdge
+  edge_encoder_bn: False
+posenc_RWSE:
+  enable: True
+  kernel:
+    times_func: range(1,21)
+  model: Linear
+  dim_pe: 10
+  raw_norm_type: BatchNorm
+train:
+  mode: custom
+  batch_size: 32
+  eval_period: 1
+  ckpt_period: 100
+model:
+  type: custom_gnn
+  loss_fun: weighted_cross_entropy
+  edge_decoding: dot
+gnn:
+  head: inductive_node
+  layers_pre_mp: 0
+  layers_mp: 4
+  layers_post_mp: 3
+  dim_inner: 64  # `gt.dim_hidden` must match `gnn.dim_inner`
+  layer_type: gatedgcnconv
+  batchnorm: True
+  act: relu
+  dropout: 0.0
+  agg: mean
+  normalize_adj: False
+#optim:
+#  clip_grad_norm: True
+#  optimizer: adamW
+#  weight_decay: 0.0
+#  base_lr: 0.0005
+#  max_epoch: 1000
+#  scheduler: reduce_on_plateau
+#  reduce_factor: 0.5
+#  schedule_patience: 10
+#  min_lr: 1e-5
+optim:
+  clip_grad_norm: True
+  optimizer: adamW
+  weight_decay: 1e-5
+  base_lr: 0.001
+  max_epoch: 100
+  scheduler: cosine_with_warmup
+  num_warmup_epochs: 5

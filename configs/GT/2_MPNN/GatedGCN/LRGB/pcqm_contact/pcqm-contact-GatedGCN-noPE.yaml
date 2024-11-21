@@ -1,0 +1,53 @@
+out_dir: results
+metric_best: mrr
+num_workers: 4
+mlflow:
+  use: False
+  project: Exp
+  name: pcqm4m-contact-GatedGCN-noPE
+wandb:
+  use: True
+  project: "PEGT"
+  name: "pcqm4m-contact-GatedGCN-noPE"
+  entity: jiaqing
+dataset:
+  format: OGB
+  name: PCQM4Mv2Contact-shuffle
+  task: graph  # PCQM4Mv2Contact is edge-level task, but because it is inductive, set to 'graph'
+  task_type: classification
+  resample_negative: True
+  transductive: False
+  node_encoder: True
+  node_encoder_name: Atom #+LapPE
+  node_encoder_bn: False
+  edge_encoder: True
+  edge_encoder_name: Bond
+  edge_encoder_bn: False
+train:
+  mode: custom
+  batch_size: 500
+  eval_period: 1
+  ckpt_period: 100
+model:
+  type: custom_gnn
+  loss_fun: cross_entropy
+  edge_decoding: dot
+gnn:
+  head: inductive_edge
+  layers_pre_mp: 0
+  layers_mp: 8
+  layers_post_mp: 1
+  dim_inner: 215
+  layer_type: gatedgcnconv
+  act: gelu
+  residual: True
+  dropout: 0.1
+  batchnorm: False
+optim:
+  clip_grad_norm: True
+  optimizer: adamW
+  weight_decay: 0.0
+  base_lr: 0.001
+  max_epoch: 100
+  scheduler: cosine_with_warmup
+  num_warmup_epochs: 5

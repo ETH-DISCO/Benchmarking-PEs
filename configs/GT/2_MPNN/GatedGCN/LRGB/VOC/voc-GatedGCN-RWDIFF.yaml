@@ -1,0 +1,53 @@
+out_dir: results
+metric_best: f1
+wandb:
+  use: True
+  project: "PEGT"
+  name: "Pascal-VOC-GatedGCN-RWDIFF"
+  entity: jiaqing
+dataset:
+  format: PyG-VOCSuperpixels
+  name: edge_wt_region_boundary
+  slic_compactness: 30
+  task: graph  # Even if VOC is node-level task, this needs to be set as 'graph'
+  task_type: classification
+  transductive: False
+  node_encoder: True
+  node_encoder_name: VOCNode+RWDIFF
+  node_encoder_bn: False
+  edge_encoder: True
+  edge_encoder_name: VOCEdge
+  edge_encoder_bn: False
+posenc_RWDIFF:
+  enable: True
+  model: DeepSet
+  dim_pe: 16
+  layers: 2
+  n_heads: 4  # Only used when `posenc.model: Transformer`
+  raw_norm_type: none
+train:
+  mode: custom
+  batch_size: 50
+  eval_period: 1
+  ckpt_period: 100
+  eval_smoothing_metrics: True
+model:
+  type: custom_gnn
+  loss_fun: weighted_cross_entropy
+gnn:
+  head: inductive_node
+  layers_pre_mp: 0
+  layers_mp: 10
+  layers_post_mp: 2
+  dim_inner: 95
+  layer_type: gatedgcnconv
+  act: gelu
+  residual: True
+  dropout: 0.2
+optim:
+  optimizer: adamW
+  weight_decay: 0.0
+  base_lr: 0.001
+  max_epoch: 200
+  scheduler: cosine_with_warmup
+  num_warmup_epochs: 10

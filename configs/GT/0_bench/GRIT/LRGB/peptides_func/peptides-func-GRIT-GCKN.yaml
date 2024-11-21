@@ -1,0 +1,85 @@
+out_dir: results
+metric_best: ap
+accelerator: "cuda:0"
+pad_to_full_graph: True
+mlflow:
+  use: False
+  project: Exp
+  name: peptides-func-GRIT-GCKN
+wandb:
+  use: True
+  project: "PEGT"
+  name: "peptides-func-GRIT-GCKN"
+  entity: jiaqing
+dataset:
+  format: OGB
+  name: peptides-functional
+  task: graph
+  task_type: classification_multilabel
+  transductive: False
+  node_encoder: True
+  node_encoder_name: Atom+GCKN
+  node_encoder_bn: False
+  edge_encoder: True
+  edge_encoder_name: Bond
+  edge_encoder_bn: False
+posenc_GCKN:
+  enable: True
+  normalization: None
+  beta: 1 # 0.5 for method "pRWSE"
+  method: "diffusion"
+  use_edge_attr: False
+  eigen:
+    laplacian_norm: none
+    eigvec_norm: L2
+    max_freqs: 20
+  model: DeepSet
+  dim_pe: 17
+  layers: 4
+  n_heads: 4  # Only used when `posenc.model: Transformer`
+  raw_norm_type: none
+train:
+  mode: custom
+#  batch_size: 32
+  batch_size: 16
+  eval_period: 1
+  ckpt_period: 100
+model:
+  type: GritTransformer
+  loss_fun: cross_entropy
+  graph_pooling: mean
+gt:
+  layer_type: GritTransformer
+  layers: 4
+  n_heads: 4
+  dim_hidden: 96  # `gt.dim_hidden` must match `gnn.dim_inner`
+  dropout: 0.0
+  attn_dropout: 0.5
+  layer_norm: False
+  batch_norm: True
+  sparse: False
+  attn:
+    clamp: 5.
+    act: 'relu'
+    full_attn: True
+    edge_enhance: False
+    O_e: True
+    norm_e: True
+    signed_sqrt: True
+    fwl: False
+gnn:
+  head: default
+  layers_pre_mp: 0
+  layers_post_mp: 1  # Not used when `gnn.head: san_graph`
+  dim_inner: 96  # `gt.dim_hidden` must match `gnn.dim_inner`
+  batchnorm: True
+  act: relu
+  dropout: 0.0
+optim:
+  clip_grad_norm: True
+  optimizer: adamW
+  weight_decay: 0.0
+  base_lr: 0.0003
+  max_epoch: 200
+  scheduler: cosine_with_warmup
+  num_warmup_epochs: 10
