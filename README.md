@@ -3,7 +3,7 @@ This repo is the extension of GRIT to evaluate PE on GTs.
 
 
 > The implementation is based on [GRIT (Ma et al., ICML 2023)](https://jiaqingxie.github.io/paper/GRIT.pdf).
-
+ 
 
 ### Python environment setup with Conda
 ```bash
