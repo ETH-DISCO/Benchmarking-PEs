@@ -7,6 +7,7 @@ from torch_geometric.graphgym.register import register_network
 from grit.layer.gatedgcn_layer import ResGatedGCNConvLayer
 from grit.layer.gatedgcn_layer import GatedGCNLayer
 from grit.layer.gine_conv_layer import GINEConvLayer
+from grit.layer.gin_layer import GINConvLayer
 
 
 @register_network('custom_gnn')
@@ -46,8 +47,10 @@ class CustomGNN(torch.nn.Module):
             return GatedGCNLayer
         elif model_type == 'gineconv':
             return GINEConvLayer
-        elif model_type == 'gatedgcnconv_noef':
+        elif model_type == 'resgatedgcnconv':
             return ResGatedGCNConvLayer
+        elif model_type == 'gin_conv':
+            return GINConvLayer
         else:
             raise ValueError("Model {} unavailable".format(model_type))
 
