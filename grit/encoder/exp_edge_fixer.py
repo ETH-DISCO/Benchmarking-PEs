@@ -91,6 +91,8 @@ class ExpanderEdgeFixer(nn.Module):
             edge_attr = edge_attr_sets[0]
             edge_types = edge_types[0]
 
+        print(edge_attr)
+
         del batch.expander_edges
         batch.expander_edge_index = edge_index
         batch.expander_edge_attr = edge_attr
