@@ -124,7 +124,7 @@ class MultiHeadAttentionLayerGritSparse(nn.Module):
 
 
 
-        if self.edge_enhance and batch.E is not None:
+        if self.edge_enhance and batch.get("E", None) is not None:
             rowV = scatter(e_t * score, batch.edge_index[1], dim=0, reduce="add")
             rowV = oe.contract("nhd, dhc -> nhc", rowV, self.VeRow, backend="torch")
 
