@@ -174,9 +174,7 @@ class ResGatedGCNConvLayer(nn.Module):
         super().__init__()
         self.model = ResGatedGraphConv(in_dim,
                                        out_dim,
-                                       dropout=dropout,
                                        act=register.act_dict[act](),
-                                       residual=residual,
                                        **kwargs)
 
     def forward(self, batch):
