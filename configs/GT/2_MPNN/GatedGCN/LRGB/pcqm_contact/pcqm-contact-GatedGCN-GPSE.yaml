@@ -1,0 +1,80 @@
+out_dir: results
+metric_best: mrr
+num_workers: 4
+mlflow:
+  use: False
+  project: Exp
+  name: pcqm4m-contact-GatedGCN-GPSE
+wandb:
+  use: True
+  project: "PEGT"
+  name: "pcqm4m-contact-GatedGCN-GPSE"
+  entity: jiaqing
+dataset:
+  format: OGB
+  name: PCQM4Mv2Contact-shuffle
+  task: graph  # PCQM4Mv2Contact is edge-level task, but because it is inductive, set to 'graph'
+  task_type: classification
+  resample_negative: True
+  transductive: False
+  node_encoder: True
+  node_encoder_name: Atom+GPSE
+  node_encoder_bn: False
+  edge_encoder: True
+  edge_encoder_name: Bond
+  edge_encoder_bn: False
+posenc_GPSE:
+  enable: true
+  rand_type: NormalSE
+  model_dir: /itet-stor/jiaxie/net_scratch/pe4gt/pretrained/gpse_model_molpcba_1.0.pt
+  dim_pe: 32
+  use_repr: true
+  repr_type: no_post_mp
+  model: mlp
+  layers: 2
+  virtual_node: true
+  input_dropout_be: 0.5
+  input_dropout_ae: 0.0
+  raw_norm_type: BatchNorm
+  gnn_cfg:
+    head: inductive_hybrid_multi
+    layers_pre_mp: 1
+    layers_mp: 20
+    layers_post_mp: 2
+    dim_inner: 512
+    layer_type: resgatedgcnconv
+    multi_head_dim_inner: 32  # use dim_inner if None
+    stage_type: skipsum
+    batchnorm: true
+    act: relu
+    dropout: 0.2
+    agg: mean
+    normalize_adj: false
+train:
+  mode: custom
+  batch_size: 500
+  eval_period: 1
+  ckpt_period: 100
+model:
+  type: custom_gnn
+  loss_fun: cross_entropy
+  edge_decoding: dot
+gnn:
+  head: inductive_edge
+  layers_pre_mp: 0
+  layers_mp: 8
+  layers_post_mp: 1
+  dim_inner: 215
+  layer_type: gatedgcnconv
+  act: gelu
+  residual: True
+  dropout: 0.1
+  batchnorm: False
+optim:
+  clip_grad_norm: True
+  optimizer: adamW
+  weight_decay: 0.0
+  base_lr: 0.001
+  max_epoch: 100
+  scheduler: cosine_with_warmup
+  num_warmup_epochs: 5

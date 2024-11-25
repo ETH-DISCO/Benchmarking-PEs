@@ -1,0 +1,86 @@
+out_dir: results
+metric_best: accuracy
+tensorboard_each_run: True  # Log to Tensorboard each run
+accelerator: "cuda:0"
+num_workers: 4
+mlflow:
+  use: False
+  project: Exp
+  name: triangles-Exphormer-SignNet
+wandb:
+  use: True
+  project: "PEGT-Synthetic"
+  name: "triangles-Exphormer-SignNet"
+  entity: jiaqing
+dataset:
+  pe_transform_on_the_fly: False # compute PE on the fly to save memory when launching many experiments in parallel
+  format: Synthetic
+  name: triangles
+  task: node
+  task_type: classification
+  transductive: False
+  node_encoder: True
+  node_encoder_name: LinearNode+SignNet
+  node_encoder_bn: False
+  edge_encoder: False
+  edge_encoder_name: LinearEdge
+  edge_encoder_bn: False
+posenc_SignNet:
+  dim_pe: 10
+  eigen:
+    eigvec_norm: L2
+    laplacian_norm: sym
+    max_freqs: 10
+  enable: True
+  layers: 4
+  model: MLP
+  n_heads: 4
+  pass_as_var: false
+  phi_hidden_dim: 64
+  phi_out_dim: 4
+  post_layers: 2
+  raw_norm_type: none
+prep:
+  exp: True
+  use_exp_edges: True
+  exp_deg: 2
+  add_edge_index: False
+  num_virt_node: 1 # Set True if you want to add global node connections beside expander edges
+gt:
+  layer_type: Exphormer # some other options: Exphormer, GINE+Exphormer, GINE, GINE__exp
+  layers: 4
+  n_heads: 4
+  dim_hidden: 52  # `gt.dim_hidden` must match `gnn.dim_inner`
+  dropout: 0.0
+  attn_dropout: 0.5
+  layer_norm: False
+  update_e: True
+  batch_norm: True
+train:
+  mode: custom
+  batch_size: 1
+  eval_period: 1
+  ckpt_period: 100
+model:
+  type: MultiModel
+  loss_fun: cross_entropy
+  edge_decoding: dot
+  graph_pooling: mean
+gnn:
+  head: default
+  layers_pre_mp: 0
+  layers_mp: 4
+  layers_post_mp: 3
+  dim_inner: 52  # `gt.dim_hidden` must match `gnn.dim_inner`
+  batchnorm: False
+  act: relu
+  agg: mean
+  normalize_adj: False
+optim:
+  clip_grad_norm: True
+  optimizer: adamW
+  weight_decay: 1e-5
+  base_lr: 0.001
+  max_epoch: 100
+  scheduler: cosine_with_warmup
+  num_warmup_epochs: 5

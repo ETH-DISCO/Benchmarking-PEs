@@ -1,0 +1,91 @@
+out_dir: results
+metric_best: accuracy
+tensorboard_each_run: True  # Log to Tensorboard each run
+accelerator: "cuda:0"
+num_workers: 4
+mlflow:
+  use: False
+  project: Exp
+  name: limitsone-GRITSparse-GPSE
+wandb:
+  use: True
+  project: "PEGT-Synthetic"
+  name: "limitsone-GRITSparse-GPSE"
+  entity: jiaqing
+dataset:
+  pe_transform_on_the_fly: False # compute PE on the fly to save memory when launching many experiments in parallel
+  format: Synthetic
+  name: limitsone
+  task: node
+  task_type: classification
+  transductive: False
+  node_encoder: True
+  node_encoder_name: LinearNode+GPSE
+  node_encoder_bn: False
+  edge_encoder: False
+  edge_encoder_name: LinearEdge
+  edge_encoder_bn: False
+posenc_GPSE:
+  enable: true
+  rand_type: NormalSE
+  model_dir: /itet-stor/jiaxie/net_scratch/pe4gt/pretrained/gpse_model_molpcba_1.0.pt
+  dim_pe: 32
+  use_repr: true
+  repr_type: no_post_mp
+  model: mlp
+  layers: 2
+  virtual_node: true
+  input_dropout_be: 0.5
+  input_dropout_ae: 0.0
+  raw_norm_type: BatchNorm
+  gnn_cfg:
+    head: inductive_hybrid_multi
+    layers_pre_mp: 1
+    layers_mp: 20
+    layers_post_mp: 2
+    dim_inner: 512
+    layer_type: resgatedgcnconv
+    multi_head_dim_inner: 32  # use dim_inner if None
+    stage_type: skipsum
+    batchnorm: true
+    act: relu
+    dropout: 0.2
+    agg: mean
+    normalize_adj: false
+train:
+  mode: custom
+  batch_size: 1
+  eval_period: 1
+  ckpt_period: 100
+model:
+  type: GPSModel
+  loss_fun: cross_entropy
+  edge_decoding: dot
+  graph_pooling: mean
+gt:  # Hyperparameters optimized for up to ~500k budget.
+  layer_type: GCN+Transformer
+  layers: 6
+  n_heads: 4
+  dim_hidden: 52  # `gt.dim_hidden` must match `gnn.dim_inner`
+  dropout: 0.0
+  attn_dropout: 0.5
+  layer_norm: False
+  batch_norm: True
+gnn:
+  head: default
+  layers_pre_mp: 0
+  layers_mp: 4
+  layers_post_mp: 3
+  dim_inner: 52  # `gt.dim_hidden` must match `gnn.dim_inner`
+  batchnorm: False
+  act: relu
+  agg: mean
+  normalize_adj: False
+optim:
+  clip_grad_norm: True
+  optimizer: adamW
+  weight_decay: 1e-5
+  base_lr: 0.001
+  max_epoch: 100
+  scheduler: cosine_with_warmup
+  num_warmup_epochs: 5
