@@ -7,7 +7,18 @@ This repo is the extension of GRIT to evaluate PE on GTs.
 
 ### Python environment setup with Conda
 ```bash
-pip install -r requirements.txt
+conda create -n revisit python=3.10
+conda install pytorch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 pytorch-cuda=12.1 -c pytorch -c nvidia
+conda install pyg -c pyg
+conda install openbabel fsspec rdkit -c conda-forge
+pip install yacs torchmetrics
+pip install performer-pytorch
+pip install ogb
+pip install tensorboardX
+pip install wandb
+pip install torch_ppr
+
+conda clean --all
 
 ```
 
