@@ -22,8 +22,8 @@ pip install attrdict
 pip install opt_einsum
 pip install graphgym
 pip install setuptools==59.5.0
-
-
+pip install loguru
+pip install pytorch_lightning
 conda clean --all
 
 ```
