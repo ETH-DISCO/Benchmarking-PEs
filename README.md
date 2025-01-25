@@ -9,16 +9,20 @@ This repo is the extension of GRIT to evaluate PE on GTs.
 ```bash
 conda create -n grit python=3.9
 conda install pytorch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 pytorch-cuda=12.1 -c pytorch -c nvidia
-conda install pyg -c pyg
 pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.3.0+cu121.html
+conda install pyg -c pyg
 conda install openbabel fsspec rdkit -c conda-forge
-pip install pytorch_lightning yacs torchmetrics
+pip install yacs torchmetrics
 pip install performer-pytorch
 pip install ogb
 pip install tensorboardX
 pip install wandb
 pip install torch_ppr
 pip install attrdict
+pip install opt_einsum
+pip install graphgym
+pip install setuptools==59.5.0
+
 
 conda clean --all
 
