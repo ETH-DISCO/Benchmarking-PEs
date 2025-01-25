@@ -18,6 +18,7 @@ pip install ogb
 pip install tensorboardX
 pip install wandb
 pip install torch_ppr
+pip install attrdict
 
 conda clean --all
 
