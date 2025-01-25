@@ -7,7 +7,7 @@ This repo is the extension of GRIT to evaluate PE on GTs.
 
 ### Python environment setup with Conda
 ```bash
-conda create -n revisit python=3.10
+conda create -n grit python=3.9
 conda install pytorch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 pytorch-cuda=12.1 -c pytorch -c nvidia
 conda install pyg -c pyg
 pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.3.0+cu121.html
